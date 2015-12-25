@@ -1,4 +1,4 @@
-FROM debian:sid
+FROM jdhebden/debian64:sid
 MAINTAINER James Hebden <https://github.com/jdhebden>
 
 # building wine64
@@ -6,15 +6,17 @@ ENV WINE_VERSION=1.8
 ENV LOG=/var/log
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update; apt-get -y upgrade; apt-get install -y git wget; apt-get build-dep 
+COPY sources.list /etc/apt/sources.list
 
-RUN mkdir -p /usr/src/wine64 /usr/src/wine32
+RUN apt-get update && apt-get -y upgrade && apt-get install -y git wget
 
-RUN git clone git://source.winehq.org/git/wine.git /usr/src/wine;   \
-RUN cd /usr/src/wine; git checkout wine-$WINE_VERSION
+RUN apt-get -y build-dep wine 
+
+RUN mkdir -p /usr/src/wine/wine64 /usr/src/wine/wine32
 
 COPY ./run.sh /usr/src/run.sh
 RUN chmod 0755 /usr/src/run.sh
 
+VOLUME /usr/src/wine
 WORKDIR /usr/src/wine64
-RUN /usr/src/run.sh
+CMD /usr/src/run.sh
