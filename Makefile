@@ -1,11 +1,11 @@
-IMAGE32 = krasnobaev/wine32
-IMAGE64 = krasnobaev/wine64
+IMAGE32 = jdhebden/wine32
+IMAGE64 = jdhebden/wine64
 INSTANCE32 = wine32-builder
 INSTANCE64 = wine64-builder
-DATAGIT = wine-git
-VER     = 1.7.28
+DATAGIT = wine
+VER     = 1.8
 NAME    = wine-$(VER)
-REV     = -2
+REV     = -1
 BLDVER  = $(NAME)$(REV)
 DATA    = $(NAME)-data$(REV)
 OUTPUTDIR = ~/
@@ -13,14 +13,12 @@ OUTPUTDIR = ~/
 build: buildwine64image startdata buildwine32image buildwine32 copywinetohost
 
 install:
-	cd /usr/src/wine-git
+	cd /usr/src/wine
 	git checkout $(NAME)
 	cd /usr/src/wine32
 	make install
 	cd /usr/src/wine64
 	make install
-	cp /usr/src/wineasio/wineasio_32bit.dll.so /usr/lib/wine/
-	cp /usr/src/wineasio/wineasio_64bit.dll.so /usr/lib64/wine/
 
 #######################################
 # WORK WITH IMAGES
@@ -29,9 +27,6 @@ buildwine64image:
 
 buildwine32image:
 	docker build -t $(IMAGE32) wine32/
-
-buildwine32image-alt:
-	docker build -t $(IMAGE32)-alt wine32/
 
 rebuildwine64image:
 	docker build --no-cache=true -t $(IMAGE64) wine64/
@@ -42,16 +37,10 @@ rebuildwine32image:
 buildwine32:
 	docker run -it --rm --name $(INSTANCE32) --volumes-from $(DATA) $(IMAGE32)
 
-buildwine32-alt:
-	docker run -it --rm --name $(INSTANCE32) --volumes-from $(DATA) $(IMAGE32)-alt
-
 startimage64bash:
 	docker run -it --rm --name $(INSTANCE64) $(IMAGE64) /bin/bash
 
 startimage32bash:
-	docker run -it --rm --name $(INSTANCE32) --volumes-from $(DATA) $(IMAGE32) /bin/bash
-
-startimage32bash-alt:
 	docker run -it --rm --name $(INSTANCE32) --volumes-from $(DATA) $(IMAGE32) /bin/bash
 
 stopbuilder32:
