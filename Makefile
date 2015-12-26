@@ -8,7 +8,7 @@ NAME    = wine-$(VER)
 REV     = -1
 BLDVER  = $(NAME)$(REV)
 DATA    = $(NAME)-data$(REV)
-VOLUME  = $(shell pwd)/build/
+VOLUME  = $(shell pwd)/build
 
 build: builddeb32image builddeb64image clone volume $(VOLUME)/git build64image build32image build64 build32
 
@@ -17,7 +17,7 @@ volume:
 	mkdir -p $(VOLUME)/git
 
 clone:
-		@echo [ -d $(VOLUME)/git/.git != true ] && git clone -b $(NAME) git://source.winehq.org/git/wine.git $(VOLUME)/git
+	test -d $(VOLUME)/git/.git || git clone -b $(NAME) git://source.winehq.org/git/wine.git $(VOLUME)/git
 
 builddeb64image:
 	@echo [[ docker image -q jdhebden/debian64 == "" ]] || /usr/share/docker.io/contrib/mkimage.sh -t jdhebden/debian64:sid debootstrap --variant=minbase --arch=amd64 sid

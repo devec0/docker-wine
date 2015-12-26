@@ -10,7 +10,9 @@ COPY sources.list /etc/apt/sources.list
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y git wget
 
-RUN apt-get -y build-dep wine 
+RUN apt-get -y build-dep wine64 
+
+RUN apt-get -y install dpkg-dev devscripts
 
 RUN mkdir -p /usr/src/wine/wine64 /usr/src/wine/wine32
 
